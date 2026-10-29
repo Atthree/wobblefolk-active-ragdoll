@@ -1,0 +1,20 @@
+{
+  "name": "com.wobblefolk.active-ragdoll",
+  "version": "0.1.0",
+  "displayName": "Wobblefolk Active Ragdoll",
+  "description": "Fully physics-driven active ragdoll character: balance, procedural walking, grabbing, carrying and climbing without animation clips.",
+  "unity": "6000.3",
+  "keywords": [
+    "active ragdoll",
+    "physics",
+    "procedural animation",
+    "character controller"
+  ],
+  "author": {
+    "name": "Abdulkadir Tiryaki"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "com.unity.modules.physics": "1.0.0"
+  }
+}
