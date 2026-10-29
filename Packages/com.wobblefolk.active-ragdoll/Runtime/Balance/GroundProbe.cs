@@ -79,7 +79,7 @@ namespace Wobblefolk.Ragdoll
             {
                 RaycastHit hit = hits[i];
                 // distance 0 means the cast started inside this collider; the point is undefined.
-                if (hit.distance <= 0f || ragdoll.IsOwnCollider(hit.collider) || Vector3.Dot(hit.normal, up) < minNormalDot)
+                if (hit.distance <= 0f || ragdoll.IsOwnOrHeld(hit.collider) || Vector3.Dot(hit.normal, up) < minNormalDot)
                 {
                     continue;
                 }

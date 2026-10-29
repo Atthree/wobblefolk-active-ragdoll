@@ -18,6 +18,7 @@ namespace Wobblefolk.Ragdoll
 
         readonly RagdollBone[] lookup = new RagdollBone[BoneIds.Count];
         readonly HashSet<Rigidbody> ownBodies = new HashSet<Rigidbody>();
+        readonly Dictionary<Rigidbody, int> heldBodies = new Dictionary<Rigidbody, int>();
         float muscleStrength = 1f;
         bool initialized;
 
@@ -51,6 +52,34 @@ namespace Wobblefolk.Ragdoll
         public bool IsOwnBody(Rigidbody body) => body != null && ownBodies.Contains(body);
 
         public bool IsOwnCollider(Collider other) => other != null && IsOwnBody(other.attachedRigidbody);
+
+        /// <summary>True while any hand of this ragdoll holds the body.</summary>
+        public bool IsHeld(Rigidbody body) => body != null && heldBodies.ContainsKey(body);
+
+        /// <summary>
+        /// True for this ragdoll's own colliders and for objects it holds. Sensors (ground, steps, aim, camera) must
+        /// ignore held objects, otherwise the character can stand on what it carries and lift itself into the sky.
+        /// </summary>
+        public bool IsOwnOrHeld(Collider other)
+        {
+            Rigidbody body = other != null ? other.attachedRigidbody : null;
+            return body != null && (ownBodies.Contains(body) || heldBodies.ContainsKey(body));
+        }
+
+        /// <summary>Registers a held object. Calls are counted, so two hands on one object need two releases.</summary>
+        public void RegisterHeld(Rigidbody body)
+        {
+            if (body == null) return;
+            heldBodies.TryGetValue(body, out int count);
+            heldBodies[body] = count + 1;
+        }
+
+        public void UnregisterHeld(Rigidbody body)
+        {
+            if (body == null || !heldBodies.TryGetValue(body, out int count)) return;
+            if (count <= 1) heldBodies.Remove(body);
+            else heldBodies[body] = count - 1;
+        }
 
         public Vector3 CenterOfMass
         {
@@ -232,7 +261,7 @@ namespace Wobblefolk.Ragdoll
 
         internal void ReportCollision(RagdollBone bone, Collision collision)
         {
-            if (IsOwnCollider(collision.collider))
+            if (IsOwnOrHeld(collision.collider))
             {
                 return;
             }

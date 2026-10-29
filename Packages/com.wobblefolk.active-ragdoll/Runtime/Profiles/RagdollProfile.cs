@@ -126,25 +126,30 @@ namespace Wobblefolk.Ragdoll
             var result = new BoneSettings[BoneIds.Count];
 
             result[(int)BoneId.Pelvis] = Bone(BoneId.Pelvis, 12f, 0f, 0f, 0f, 0f, 0f, 0f);
-            result[(int)BoneId.Chest] = Bone(BoneId.Chest, 15f, -30f, 20f, 25f, 20f, 1800f, 90f);
-            result[(int)BoneId.Head] = Bone(BoneId.Head, 5f, -40f, 40f, 50f, 30f, 400f, 25f);
+            // Positive X bends the chest forward.
+            // Max forces cap each muscle's torque (N·m). Unlimited muscles turn limbs into battering rams that
+            // fling anything they touch; the pelvis lift carries most of the body weight, so legs need little.
+            result[(int)BoneId.Chest] = Bone(BoneId.Chest, 15f, -25f, 75f, 25f, 20f, 1800f, 90f, 900f);
+            result[(int)BoneId.Head] = Bone(BoneId.Head, 5f, -40f, 40f, 50f, 30f, 400f, 25f, 120f);
 
             // Arms hang down; positive X rotation swings the arm backwards.
             for (int side = 0; side < 2; side++)
             {
                 var s = (BodySide)side;
-                result[(int)BoneIds.UpperArm(s)] = Bone(BoneIds.UpperArm(s), 2.5f, -175f, 60f, 90f, 90f, 300f, 20f);
-                result[(int)BoneIds.LowerArm(s)] = Bone(BoneIds.LowerArm(s), 1.5f, -145f, 0f, 60f, 10f, 200f, 12f);
-                result[(int)BoneIds.Hand(s)] = Bone(BoneIds.Hand(s), 0.5f, -60f, 60f, 30f, 30f, 50f, 3f);
-                result[(int)BoneIds.UpperLeg(s)] = Bone(BoneIds.UpperLeg(s), 7f, -110f, 40f, 20f, 35f, 1500f, 70f);
-                result[(int)BoneIds.LowerLeg(s)] = Bone(BoneIds.LowerLeg(s), 4f, 0f, 145f, 5f, 5f, 1200f, 60f);
-                result[(int)BoneIds.Foot(s)] = Bone(BoneIds.Foot(s), 1f, -35f, 45f, 15f, 20f, 400f, 20f);
+                // Arm torques are capped at roughly human strength so a gripping hand cannot fling heavy objects.
+                result[(int)BoneIds.UpperArm(s)] = Bone(BoneIds.UpperArm(s), 2.5f, -175f, 60f, 90f, 90f, 300f, 20f, 140f);
+                result[(int)BoneIds.LowerArm(s)] = Bone(BoneIds.LowerArm(s), 1.5f, -145f, 0f, 60f, 10f, 200f, 12f, 90f);
+                result[(int)BoneIds.Hand(s)] = Bone(BoneIds.Hand(s), 0.5f, -60f, 60f, 30f, 30f, 50f, 3f, 30f);
+                result[(int)BoneIds.UpperLeg(s)] = Bone(BoneIds.UpperLeg(s), 7f, -110f, 40f, 20f, 35f, 1500f, 70f, 450f);
+                result[(int)BoneIds.LowerLeg(s)] = Bone(BoneIds.LowerLeg(s), 4f, 0f, 145f, 5f, 5f, 1200f, 60f, 350f);
+                result[(int)BoneIds.Foot(s)] = Bone(BoneIds.Foot(s), 1f, -35f, 45f, 15f, 20f, 400f, 20f, 120f);
             }
 
             return result;
         }
 
-        static BoneSettings Bone(BoneId id, float mass, float lowX, float highX, float y, float z, float spring, float damper)
+        static BoneSettings Bone(BoneId id, float mass, float lowX, float highX, float y, float z, float spring, float damper,
+            float maxForce = 10000f)
         {
             return new BoneSettings
             {
@@ -156,6 +161,7 @@ namespace Wobblefolk.Ragdoll
                 angularZ = z,
                 spring = spring,
                 damper = damper,
+                maxForce = maxForce,
             };
         }
     }

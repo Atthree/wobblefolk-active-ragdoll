@@ -12,7 +12,7 @@ namespace Wobblefolk.Ragdoll
         enum Shape { Box, Capsule, Sphere }
 
         public static ActiveRagdoll Build(PrimitiveBodyShape shape, RagdollProfile ragdollProfile, BalanceProfile balanceProfile,
-            LocomotionProfile locomotionProfile, Vector3 position, Quaternion rotation, Material material = null,
+            LocomotionProfile locomotionProfile, ArmProfile armProfile, Vector3 position, Quaternion rotation, Material material = null,
             string name = "Active Ragdoll")
         {
             var root = new GameObject(name);
@@ -79,9 +79,16 @@ namespace Wobblefolk.Ragdoll
             ragdoll.Configure(ragdollProfile, bones);
             var balance = root.AddComponent<BalanceController>();
             balance.Configure(ragdoll, balanceProfile);
+            LocomotionController locomotion = null;
             if (locomotionProfile != null)
             {
-                root.AddComponent<LocomotionController>().Configure(ragdoll, balance, locomotionProfile);
+                locomotion = root.AddComponent<LocomotionController>();
+                locomotion.Configure(ragdoll, balance, locomotionProfile);
+            }
+
+            if (armProfile != null)
+            {
+                root.AddComponent<ArmController>().Configure(ragdoll, balance, locomotion, armProfile);
             }
 
             return ragdoll;

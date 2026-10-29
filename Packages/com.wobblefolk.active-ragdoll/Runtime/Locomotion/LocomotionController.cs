@@ -290,7 +290,9 @@ namespace Wobblefolk.Ragdoll
                 knee = jump.airKnee;
             }
 
-            float ankle = -(hip + knee) * gait.ankleCompensation;
+            // Flex the hips by the pelvis bend so the legs stay under the body while bending over.
+            hip -= balance.PelvisBend;
+            float ankle = -(hip + balance.PelvisBend + knee) * gait.ankleCompensation;
 
             SetJointX(BoneIds.UpperLeg(side), hip);
             SetJointX(BoneIds.LowerLeg(side), knee);
@@ -360,7 +362,7 @@ namespace Wobblefolk.Ragdoll
                 QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++)
             {
-                if (!ragdoll.IsOwnCollider(hits[i].collider))
+                if (!ragdoll.IsOwnOrHeld(hits[i].collider))
                 {
                     return true;
                 }
