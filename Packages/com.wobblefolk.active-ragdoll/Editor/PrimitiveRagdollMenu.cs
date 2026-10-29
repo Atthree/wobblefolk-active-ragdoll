@@ -19,7 +19,13 @@ namespace Wobblefolk.Ragdoll.Editor
         static void CreatePlayerRagdoll(MenuCommand command)
         {
             ActiveRagdoll ragdoll = Create(command);
+            AddPlayerControls(ragdoll);
+            Selection.activeGameObject = ragdoll.gameObject;
+        }
 
+        /// <summary>Adds player input, a follow camera on the main camera and scene physics settings.</summary>
+        internal static void AddPlayerControls(ActiveRagdoll ragdoll)
+        {
             Camera camera = Camera.main;
             if (camera == null)
             {
@@ -33,7 +39,7 @@ namespace Wobblefolk.Ragdoll.Editor
             Undo.RecordObject(follow, "Assign Follow Target");
             follow.Target = ragdoll;
 
-            var input = ragdoll.gameObject.AddComponent<RagdollPlayerInput>();
+            var input = Undo.AddComponent<RagdollPlayerInput>(ragdoll.gameObject);
             input.FollowCamera = follow;
 
             if (Object.FindAnyObjectByType<RagdollPhysicsSettings>() == null)
@@ -41,8 +47,6 @@ namespace Wobblefolk.Ragdoll.Editor
                 var settings = new GameObject("Ragdoll Physics Settings", typeof(RagdollPhysicsSettings));
                 Undo.RegisterCreatedObjectUndo(settings, "Create Ragdoll Physics Settings");
             }
-
-            Selection.activeGameObject = ragdoll.gameObject;
         }
 
         static ActiveRagdoll Create(MenuCommand command)

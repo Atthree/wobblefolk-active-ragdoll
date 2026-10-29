@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ba33389553db96449a2b23f2922c2c8, type: 3}
+  m_Name: PlaygroundBalanceProfile
+  m_EditorClassIdentifier: Wobblefolk.Ragdoll::Wobblefolk.Ragdoll.BalanceProfile
+  upright:
+    tiltSpring: 900
+    tiltDamper: 90
+    yawSpring: 400
+    yawDamper: 60
+    maxTorque: 3000
+    chestWeight: 0.6
+  height:
+    standHeight: 0.96
+    spring: 150
+    damper: 20
+    gravityCompensation: 0.9
+    maxLiftAcceleration: 30
+  ground:
+    groundLayers:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    probeRadius: 0.15
+    probeStartOffset: 0.3
+    probeExtraDistance: 0.25
+    footProbeDistance: 0.08
+    maxGroundAngle: 55
+  fall:
+    fallTiltAngle: 55
+    fallTiltTime: 0.2
+    knockdownImpactSpeed: 9
+    knockoutImpactSpeed: 13
+    ignoreFootImpacts: 1
+    fallenMuscleStrength: 0.3
+  getUp:
+    delay: 1.2
+    maxStartSpeed: 1.5
+    duration: 1
+    strengthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    completeTiltAngle: 20
+    timeout: 3
+  knockout:
+    defaultDuration: 4
+    muscleStrength: 0.05

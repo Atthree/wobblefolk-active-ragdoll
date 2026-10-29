@@ -17,5 +17,12 @@
   "dependencies": {
     "com.unity.modules.physics": "1.0.0",
     "com.unity.inputsystem": "1.20.0"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Playground",
+      "description": "Test scene built from primitives: flat ground, ramp, stairs, boxes and barrels to carry, a ledge to climb and towers to knock over. Materials use the active render pipeline's default shader (URP Lit).",
+      "path": "Samples~/Playground"
+    }
+  ]
 }

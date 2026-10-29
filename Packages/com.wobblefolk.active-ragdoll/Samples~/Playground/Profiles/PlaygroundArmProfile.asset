@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef9d4b374b6c8b4d92c9c0593e14f00, type: 3}
+  m_Name: PlaygroundArmProfile
+  m_EditorClassIdentifier: Wobblefolk.Ragdoll::Wobblefolk.Ragdoll.ArmProfile
+  reach:
+    muscleStrength: 4
+    elbowBend: 5
+    aimLayers:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    maxAimDistance: 8
+    defaultReachDistance: 1.5
+    faceAim: 1
+    faceAimTurnSpeed: 360
+    bendStartAngle: 10
+    bendPerDegree: 1.6
+    maxBend: 90
+    pelvisBendShare: 0.4
+    maxPelvisBend: 35
+    bendResponse: 6
+  grab:
+    grabLayers:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    grabRadius: 0.06
+    allowStatic: 1
+    breakForce: 4000
+    breakTorque: 0
+    lockRotation: 1
+    angularSpring: 0
+    angularDamper: 2
+    maxSolverMassRatio: 0
+    heldMaxDepenetrationVelocity: 2
+    heldSolverIterations: 12
+    restoreDelay: 1
+    regrabDelay: 0.25
+    releaseOnFall: 1
+    ignoreArmCollisions: 1

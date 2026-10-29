@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a46b5666265439d42a4503a1ba9c5e74, type: 3}
+  m_Name: PlaygroundClimbProfile
+  m_EditorClassIdentifier: Wobblefolk.Ragdoll::Wobblefolk.Ragdoll.ClimbProfile
+  anchors:
+    kinematicIsAnchor: 1
+    minAnchorMass: 200
+    minHeightAboveChest: 0.05
+  ledge:
+    inset: 0.2
+    maxHeightAboveGrip: 0.9
+    maxTopAngle: 40
+  hang:
+    balanceWeight: 0.15
+  pullUp:
+    chestHeightAboveLedge: 0.3
+    maxChestAboveGrip: 0.45
+    wallOffset: 0.3
+    spring: 40
+    damper: 9
+    maxAcceleration: 18
+    gravityCompensation: 1
+    drivenShare: 0.6
+    completeTolerance: 0.1
+    timeout: 2.5
+  mantle:
+    forwardDistance: 0.6
+    pelvisHeightAboveLedge: 0.75
+    completeClearance: 0.3
+    topTolerance: 0.1
+    timeout: 2
+  requestBufferTime: 0.25
+  regrabBlockTime: 0.6
