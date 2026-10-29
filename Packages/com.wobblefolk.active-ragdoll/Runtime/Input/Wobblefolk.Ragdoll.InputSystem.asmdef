@@ -1,0 +1,17 @@
+{
+    "name": "Wobblefolk.Ragdoll.InputSystem",
+    "rootNamespace": "Wobblefolk.Ragdoll",
+    "references": [
+        "Wobblefolk.Ragdoll",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

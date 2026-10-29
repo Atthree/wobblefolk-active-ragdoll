@@ -33,6 +33,15 @@ namespace Wobblefolk.Ragdoll
         /// <summary>When true the stand-height lift is suspended, e.g. during the rising part of a jump.</summary>
         public bool SuspendLift { get; set; }
 
+        /// <summary>World direction the pelvis and chest are held towards. Tilt it away from <see cref="Up"/> to lean.</summary>
+        public Vector3 TargetUp { get; set; } = Vector3.up;
+
+        /// <summary>Added to the profile stand height, e.g. while stepping up stairs.</summary>
+        public float HeightOffset { get; set; }
+
+        /// <summary>Stand height currently targeted in the Normal state.</summary>
+        public float StandHeight => profile.height.standHeight + HeightOffset;
+
         /// <summary>Current tilt of the pelvis away from the up axis in degrees.</summary>
         public float Tilt { get; private set; }
 
@@ -61,6 +70,7 @@ namespace Wobblefolk.Ragdoll
             pelvisForwardLocal = pelvis.InverseTransformDirection(facing);
             if (ragdoll.Chest != null) chestUpLocal = ragdoll.Chest.transform.InverseTransformDirection(up);
             DesiredFacing = facing;
+            TargetUp = up;
         }
 
         void OnEnable()
@@ -113,7 +123,7 @@ namespace Wobblefolk.Ragdoll
             switch (ragdoll.State)
             {
                 case RagdollState.Normal:
-                    ApplyBalance(up, BalanceWeight, profile.height.standHeight);
+                    ApplyBalance(up, BalanceWeight, StandHeight);
                     UpdateFallDetection();
                     break;
 
@@ -184,23 +194,24 @@ namespace Wobblefolk.Ragdoll
             UprightSettings upright = profile.upright;
             Rigidbody pelvis = ragdoll.Pelvis.Body;
 
-            Vector3 torque = UprightTorque(pelvis, pelvisUpLocal, up, upright) + YawTorque(pelvis, up, upright);
+            Vector3 targetUp = ragdoll.State == RagdollState.Normal ? TargetUp.normalized : up;
+            Vector3 torque = UprightTorque(pelvis, pelvisUpLocal, targetUp, up, upright) + YawTorque(pelvis, up, upright);
             pelvis.AddTorque(JointMath.ClampMagnitude(torque, upright.maxTorque) * weight, ForceMode.Force);
 
             RagdollBone chest = ragdoll.Chest;
             if (chest != null && upright.chestWeight > 0f)
             {
-                Vector3 chestTorque = UprightTorque(chest.Body, chestUpLocal, up, upright) * upright.chestWeight;
+                Vector3 chestTorque = UprightTorque(chest.Body, chestUpLocal, targetUp, up, upright) * upright.chestWeight;
                 chest.Body.AddTorque(JointMath.ClampMagnitude(chestTorque, upright.maxTorque) * weight, ForceMode.Force);
             }
 
             ApplyLift(pelvis, up, weight, targetHeight);
         }
 
-        static Vector3 UprightTorque(Rigidbody body, Vector3 upLocal, Vector3 up, UprightSettings upright)
+        static Vector3 UprightTorque(Rigidbody body, Vector3 upLocal, Vector3 targetUp, Vector3 up, UprightSettings upright)
         {
             Vector3 currentUp = body.rotation * upLocal;
-            Quaternion error = Quaternion.FromToRotation(currentUp, up);
+            Quaternion error = Quaternion.FromToRotation(currentUp, targetUp);
             JointMath.ToAngleAxisRadians(error, out float angle, out Vector3 axis);
 
             Vector3 tiltVelocity = Vector3.ProjectOnPlane(body.angularVelocity, up);
@@ -273,8 +284,16 @@ namespace Wobblefolk.Ragdoll
                 return;
             }
 
-            float speed = collision.relativeVelocity.magnitude;
             FallSettings fall = profile.fall;
+            if (fall.ignoreFootImpacts && (bone.Id == BoneId.FootLeft || bone.Id == BoneId.FootRight))
+            {
+                return;
+            }
+
+            // Only the approach speed along the contact normal counts; sliding and grazing contacts are not impacts.
+            float speed = collision.contactCount > 0
+                ? Mathf.Abs(Vector3.Dot(collision.relativeVelocity, collision.GetContact(0).normal))
+                : collision.relativeVelocity.magnitude;
 
             if (bone.Id == BoneId.Head && fall.knockoutImpactSpeed > 0f && speed >= fall.knockoutImpactSpeed
                 && ragdoll.State != RagdollState.Unconscious)
