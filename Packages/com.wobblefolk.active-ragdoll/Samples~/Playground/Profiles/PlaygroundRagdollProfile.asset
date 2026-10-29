@@ -1,0 +1,196 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992c627f91429eb48bcaffb70145ab6a, type: 3}
+  m_Name: PlaygroundRagdollProfile
+  m_EditorClassIdentifier: Wobblefolk.Ragdoll::Wobblefolk.Ragdoll.RagdollProfile
+  physics:
+    solverIterations: 12
+    solverVelocityIterations: 4
+    maxAngularVelocity: 30
+    maxDepenetrationVelocity: 5
+    linearDamping: 0.05
+    angularDamping: 0.5
+    interpolation: 1
+    collisionDetection: 3
+    useProjection: 1
+    projectionDistance: 0.05
+    projectionAngle: 10
+    enablePreprocessing: 0
+    connectedMassScale: 1
+    ignoreSelfCollisions: 1
+  muscleStrength: 1
+  bones:
+  - bone: 0
+    mass: 12
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: 0
+    highAngularX: 0
+    angularY: 0
+    angularZ: 0
+    spring: 0
+    damper: 0
+    maxForce: 10000
+  - bone: 1
+    mass: 15
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -25
+    highAngularX: 75
+    angularY: 25
+    angularZ: 20
+    spring: 1800
+    damper: 90
+    maxForce: 900
+  - bone: 2
+    mass: 5
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -40
+    highAngularX: 40
+    angularY: 50
+    angularZ: 30
+    spring: 400
+    damper: 25
+    maxForce: 120
+  - bone: 3
+    mass: 2.5
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -175
+    highAngularX: 60
+    angularY: 90
+    angularZ: 90
+    spring: 300
+    damper: 20
+    maxForce: 140
+  - bone: 4
+    mass: 1.5
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -145
+    highAngularX: 0
+    angularY: 60
+    angularZ: 10
+    spring: 200
+    damper: 12
+    maxForce: 90
+  - bone: 5
+    mass: 0.5
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -60
+    highAngularX: 60
+    angularY: 30
+    angularZ: 30
+    spring: 50
+    damper: 3
+    maxForce: 30
+  - bone: 6
+    mass: 2.5
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -175
+    highAngularX: 60
+    angularY: 90
+    angularZ: 90
+    spring: 300
+    damper: 20
+    maxForce: 140
+  - bone: 7
+    mass: 1.5
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -145
+    highAngularX: 0
+    angularY: 60
+    angularZ: 10
+    spring: 200
+    damper: 12
+    maxForce: 90
+  - bone: 8
+    mass: 0.5
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -60
+    highAngularX: 60
+    angularY: 30
+    angularZ: 30
+    spring: 50
+    damper: 3
+    maxForce: 30
+  - bone: 9
+    mass: 7
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -110
+    highAngularX: 40
+    angularY: 20
+    angularZ: 35
+    spring: 1500
+    damper: 70
+    maxForce: 450
+  - bone: 10
+    mass: 4
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: 0
+    highAngularX: 145
+    angularY: 5
+    angularZ: 5
+    spring: 1200
+    damper: 60
+    maxForce: 350
+  - bone: 11
+    mass: 1
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -35
+    highAngularX: 45
+    angularY: 15
+    angularZ: 20
+    spring: 400
+    damper: 20
+    maxForce: 120
+  - bone: 12
+    mass: 7
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -110
+    highAngularX: 40
+    angularY: 20
+    angularZ: 35
+    spring: 1500
+    damper: 70
+    maxForce: 450
+  - bone: 13
+    mass: 4
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: 0
+    highAngularX: 145
+    angularY: 5
+    angularZ: 5
+    spring: 1200
+    damper: 60
+    maxForce: 350
+  - bone: 14
+    mass: 1
+    axis: {x: 1, y: 0, z: 0}
+    secondaryAxis: {x: 0, y: 1, z: 0}
+    lowAngularX: -35
+    highAngularX: 45
+    angularY: 15
+    angularZ: 20
+    spring: 400
+    damper: 20
+    maxForce: 120
