@@ -193,6 +193,15 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.wobblefolk.active-ragdoll": {
+      "version": "file:com.wobblefolk.active-ragdoll",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.inputsystem": "1.20.0"
+      }
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
