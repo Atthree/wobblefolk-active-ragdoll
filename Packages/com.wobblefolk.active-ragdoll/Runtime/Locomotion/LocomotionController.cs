@@ -38,6 +38,12 @@ namespace Wobblefolk.Ragdoll
         /// <summary>Multiplier on speed and jump height, e.g. lowered while carrying something heavy.</summary>
         public float SpeedMultiplier { get; set; } = 1f;
 
+        /// <summary>Extra lean in degrees along its direction, e.g. leaning back against a carried load.</summary>
+        public Vector3 AdditionalLean { get; set; }
+
+        /// <summary>When false, sprint input is ignored, e.g. while straining under a load.</summary>
+        public bool SprintAllowed { get; set; } = true;
+
         public bool IsGrounded { get; private set; }
         public bool IsStepping { get; private set; }
         public float GaitPhase => gaitPhase;
@@ -129,7 +135,7 @@ namespace Wobblefolk.Ragdoll
         {
             MovementSettings movement = profile.movement;
             Vector3 input = Vector3.ClampMagnitude(Vector3.ProjectOnPlane(MoveInput, up), 1f);
-            float speed = (Sprint ? movement.sprintSpeed : movement.walkSpeed) * SpeedMultiplier;
+            float speed = (Sprint && SprintAllowed ? movement.sprintSpeed : movement.walkSpeed) * SpeedMultiplier;
             Vector3 target = input * speed;
 
             if (IsGrounded && ground.isGrounded)
@@ -173,6 +179,7 @@ namespace Wobblefolk.Ragdoll
             float sprintSpeed = Mathf.Max(profile.movement.sprintSpeed, 0.01f);
             Vector3 target = IsGrounded
                 ? acceleration * settings.perAcceleration + HorizontalVelocity * (settings.atSprintSpeed / sprintSpeed)
+                  + Vector3.ProjectOnPlane(AdditionalLean, up)
                 : Vector3.zero;
             target = Vector3.ClampMagnitude(target, settings.max);
             lean = Vector3.Lerp(lean, target, 1f - Mathf.Exp(-settings.response * dt));

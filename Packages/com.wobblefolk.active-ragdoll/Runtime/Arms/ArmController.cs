@@ -91,6 +91,7 @@ namespace Wobblefolk.Ragdoll
         readonly RaycastHit[] hits = new RaycastHit[MaxOverlaps];
         bool initialized;
         float bend;
+        float grabBlockedUntil = float.NegativeInfinity;
 
         public ArmProfile Profile => profile;
         public ArmEvents Events => events;
@@ -190,6 +191,9 @@ namespace Wobblefolk.Ragdoll
             }
         }
 
+        /// <summary>Prevents new grabs for a while, e.g. right after climbing over a ledge.</summary>
+        public void BlockGrabs(float duration) => grabBlockedUntil = Mathf.Max(grabBlockedUntil, Time.time + duration);
+
         /// <summary>Lets go with one hand, even while its input is still held.</summary>
         public void Release(BodySide side)
         {
@@ -239,7 +243,8 @@ namespace Wobblefolk.Ragdoll
                 if (arm.reaching)
                 {
                     PoseArm(arm);
-                    if (!arm.holding && canAct && Time.time - arm.releaseTime >= profile.grab.regrabDelay)
+                    if (!arm.holding && canAct && Time.time >= grabBlockedUntil
+                        && Time.time - arm.releaseTime >= profile.grab.regrabDelay)
                     {
                         TryGrab(arm);
                     }

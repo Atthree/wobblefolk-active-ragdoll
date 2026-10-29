@@ -15,6 +15,7 @@ namespace Wobblefolk.Ragdoll
     {
         [SerializeField] LocomotionController locomotion;
         [SerializeField] ArmController arms;
+        [SerializeField] ClimbController climb;
         [SerializeField] RagdollFollowCamera followCamera;
 
         [Header("Actions")]
@@ -46,6 +47,7 @@ namespace Wobblefolk.Ragdoll
         {
             locomotion = GetComponent<LocomotionController>();
             arms = GetComponent<ArmController>();
+            climb = GetComponent<ClimbController>();
             followCamera = FindAnyObjectByType<RagdollFollowCamera>();
         }
 
@@ -53,6 +55,7 @@ namespace Wobblefolk.Ragdoll
         {
             if (locomotion == null) locomotion = GetComponent<LocomotionController>();
             if (arms == null) arms = GetComponent<ArmController>();
+            if (climb == null) climb = GetComponent<ClimbController>();
         }
 
         InputActionProperty[] Actions => new[] { move, look, jump, sprint, leftArm, rightArm };
@@ -112,7 +115,9 @@ namespace Wobblefolk.Ragdoll
 
             if (jump.action != null && jump.action.WasPressedThisFrame())
             {
+                // Jump doubles as "pull up" while holding a ledge.
                 locomotion.RequestJump();
+                if (climb != null) climb.RequestClimb();
             }
         }
 

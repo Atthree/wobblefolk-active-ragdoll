@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Wobblefolk.Ragdoll
@@ -20,6 +21,17 @@ namespace Wobblefolk.Ragdoll
         float tiltTimer;
         float knockoutDuration;
         float getUpStartHeight;
+
+        struct Modifier
+        {
+            public float balanceWeight;
+            public float liftWeight;
+            public float supportedMass;
+        }
+
+        readonly Dictionary<Object, Modifier> modifiers = new Dictionary<Object, Modifier>();
+        float modifierBalance = 1f;
+        float modifierLift = 1f;
 
         public BalanceProfile Profile => profile;
         public GroundInfo Ground { get; private set; }
@@ -47,6 +59,9 @@ namespace Wobblefolk.Ragdoll
 
         /// <summary>Stand height currently targeted in the Normal state.</summary>
         public float StandHeight => profile.height.standHeight + HeightOffset;
+
+        /// <summary>Extra mass the stand-height lift carries, e.g. a lifted box. Sum of all modifiers.</summary>
+        public float SupportedMass { get; private set; }
 
         /// <summary>Current tilt of the pelvis away from the up axis in degrees.</summary>
         public float Tilt { get; private set; }
@@ -111,6 +126,44 @@ namespace Wobblefolk.Ragdoll
         {
             knockoutDuration = duration >= 0f ? duration : profile.knockout.defaultDuration;
             ragdoll.SetState(RagdollState.Unconscious);
+        }
+
+        /// <summary>
+        /// Registers how another system scales balance this step: torque weight, lift weight and extra carried mass.
+        /// Weights from all sources multiply; masses add. Each source keeps one entry until <see cref="ClearModifier"/>.
+        /// </summary>
+        public void SetModifier(Object source, float balanceWeight, float liftWeight, float supportedMass = 0f)
+        {
+            modifiers[source] = new Modifier
+            {
+                balanceWeight = balanceWeight,
+                liftWeight = liftWeight,
+                supportedMass = supportedMass,
+            };
+            RecalculateModifiers();
+        }
+
+        public void ClearModifier(Object source)
+        {
+            if (modifiers.Remove(source))
+            {
+                RecalculateModifiers();
+            }
+        }
+
+        void RecalculateModifiers()
+        {
+            modifierBalance = 1f;
+            modifierLift = 1f;
+            float mass = 0f;
+            foreach (Modifier modifier in modifiers.Values)
+            {
+                modifierBalance *= modifier.balanceWeight;
+                modifierLift *= modifier.liftWeight;
+                mass += modifier.supportedMass;
+            }
+
+            SupportedMass = mass;
         }
 
         void FixedUpdate()
@@ -207,16 +260,17 @@ namespace Wobblefolk.Ragdoll
             Vector3 pelvisUp = normal ? Bend(targetUp, PelvisBend, up) : up;
             Vector3 chestUp = normal ? Bend(targetUp, ChestBend, up) : up;
             Vector3 torque = UprightTorque(pelvis, pelvisUpLocal, pelvisUp, up, upright) + YawTorque(pelvis, up, upright);
-            pelvis.AddTorque(JointMath.ClampMagnitude(torque, upright.maxTorque) * weight, ForceMode.Force);
+            float torqueWeight = weight * modifierBalance;
+            pelvis.AddTorque(JointMath.ClampMagnitude(torque, upright.maxTorque) * torqueWeight, ForceMode.Force);
 
             RagdollBone chest = ragdoll.Chest;
             if (chest != null && upright.chestWeight > 0f)
             {
                 Vector3 chestTorque = UprightTorque(chest.Body, chestUpLocal, chestUp, up, upright) * upright.chestWeight;
-                chest.Body.AddTorque(JointMath.ClampMagnitude(chestTorque, upright.maxTorque) * weight, ForceMode.Force);
+                chest.Body.AddTorque(JointMath.ClampMagnitude(chestTorque, upright.maxTorque) * torqueWeight, ForceMode.Force);
             }
 
-            ApplyLift(pelvis, up, weight, targetHeight);
+            ApplyLift(pelvis, up, weight * modifierLift, targetHeight);
         }
 
         /// <summary>Tilts an up vector forward (towards the desired facing) by the given degrees.</summary>
@@ -258,7 +312,7 @@ namespace Wobblefolk.Ragdoll
         void ApplyLift(Rigidbody pelvis, Vector3 up, float weight, float targetHeight)
         {
             GroundInfo ground = Ground;
-            if (SuspendLift || !ground.isGrounded)
+            if (SuspendLift || !ground.isGrounded || weight <= 0f)
             {
                 return;
             }
@@ -270,7 +324,7 @@ namespace Wobblefolk.Ragdoll
                                  + error * height.spring
                                  - verticalVelocity * height.damper;
             acceleration = Mathf.Clamp(acceleration, 0f, height.maxLiftAcceleration);
-            pelvis.AddForce(up * (acceleration * ragdoll.TotalMass * weight), ForceMode.Force);
+            pelvis.AddForce(up * (acceleration * (ragdoll.TotalMass + SupportedMass) * weight), ForceMode.Force);
         }
 
         Vector3 GroundVelocity()
