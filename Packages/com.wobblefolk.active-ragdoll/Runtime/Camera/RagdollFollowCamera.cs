@@ -101,7 +101,7 @@ namespace Wobblefolk.Ragdoll
                 QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++)
             {
-                if (hits[i].distance > 0f && !target.IsOwnCollider(hits[i].collider))
+                if (hits[i].distance > 0f && !target.IsOwnOrHeld(hits[i].collider))
                 {
                     allowed = Mathf.Min(allowed, Mathf.Max(minDistance, hits[i].distance));
                 }

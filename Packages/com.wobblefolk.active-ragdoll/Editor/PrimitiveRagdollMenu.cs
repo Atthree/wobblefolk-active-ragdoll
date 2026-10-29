@@ -50,9 +50,10 @@ namespace Wobblefolk.Ragdoll.Editor
             RagdollProfile ragdollProfile = FindOrCreateAsset<RagdollProfile>("RagdollProfile");
             BalanceProfile balanceProfile = FindOrCreateAsset<BalanceProfile>("BalanceProfile");
             LocomotionProfile locomotionProfile = FindOrCreateAsset<LocomotionProfile>("LocomotionProfile");
+            ArmProfile armProfile = FindOrCreateAsset<ArmProfile>("ArmProfile");
 
             ActiveRagdoll ragdoll = PrimitiveRagdollBuilder.Build(new PrimitiveBodyShape(), ragdollProfile, balanceProfile,
-                locomotionProfile, SpawnPosition(), Quaternion.identity);
+                locomotionProfile, armProfile, SpawnPosition(), Quaternion.identity);
             ragdoll.gameObject.AddComponent<RagdollDebugTools>();
 
             if (command.context is GameObject parent)

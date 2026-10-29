@@ -21,6 +21,7 @@ namespace Wobblefolk.Ragdoll
         BoneSettings settings;
         float appliedStrength = -1f;
         float globalStrength = 1f;
+        float localStrength = 1f;
 
         public BoneId Id => id;
         public Rigidbody Body => body;
@@ -104,13 +105,37 @@ namespace Wobblefolk.Ragdoll
         /// <summary>Scales this bone's muscle spring and damper relative to its profile values.</summary>
         public void SetMuscleStrength(float strength)
         {
-            if (joint == null || settings == null || Mathf.Approximately(strength, appliedStrength))
+            if (Mathf.Approximately(strength, appliedStrength))
             {
                 return;
             }
 
             appliedStrength = strength;
-            float scale = strength * globalStrength;
+            ApplyDrive();
+        }
+
+        /// <summary>
+        /// Extra multiplier for this bone only, on top of <see cref="SetMuscleStrength"/>, e.g. stiffer arms while reaching.
+        /// </summary>
+        public void SetLocalMuscleStrength(float multiplier)
+        {
+            if (Mathf.Approximately(multiplier, localStrength))
+            {
+                return;
+            }
+
+            localStrength = multiplier;
+            ApplyDrive();
+        }
+
+        void ApplyDrive()
+        {
+            if (joint == null || settings == null)
+            {
+                return;
+            }
+
+            float scale = appliedStrength * globalStrength * localStrength;
             joint.slerpDrive = new JointDrive
             {
                 positionSpring = settings.spring * scale,

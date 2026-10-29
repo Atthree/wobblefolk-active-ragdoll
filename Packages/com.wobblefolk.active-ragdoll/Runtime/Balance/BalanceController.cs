@@ -39,6 +39,12 @@ namespace Wobblefolk.Ragdoll
         /// <summary>Added to the profile stand height, e.g. while stepping up stairs.</summary>
         public float HeightOffset { get; set; }
 
+        /// <summary>Forward bend of the chest target in degrees, e.g. while reaching down.</summary>
+        public float ChestBend { get; set; }
+
+        /// <summary>Forward bend of the pelvis target in degrees. Locomotion flexes the hips to keep the legs under it.</summary>
+        public float PelvisBend { get; set; }
+
         /// <summary>Stand height currently targeted in the Normal state.</summary>
         public float StandHeight => profile.height.standHeight + HeightOffset;
 
@@ -117,7 +123,9 @@ namespace Wobblefolk.Ragdoll
             Vector3 up = Up;
             Ground = probe.Probe(profile.ground, profile.height.standHeight, up);
             Rigidbody pelvis = ragdoll.Pelvis.Body;
-            Tilt = Vector3.Angle(pelvis.rotation * pelvisUpLocal, up);
+            // Tilt is measured against the intended pelvis orientation, so deliberate leaning and bending are not falls.
+            Vector3 intendedUp = ragdoll.State == RagdollState.Normal ? Bend(TargetUp.normalized, PelvisBend, up) : up;
+            Tilt = Vector3.Angle(pelvis.rotation * pelvisUpLocal, intendedUp);
             float stateTime = ragdoll.StateTime;
 
             switch (ragdoll.State)
@@ -194,18 +202,33 @@ namespace Wobblefolk.Ragdoll
             UprightSettings upright = profile.upright;
             Rigidbody pelvis = ragdoll.Pelvis.Body;
 
-            Vector3 targetUp = ragdoll.State == RagdollState.Normal ? TargetUp.normalized : up;
-            Vector3 torque = UprightTorque(pelvis, pelvisUpLocal, targetUp, up, upright) + YawTorque(pelvis, up, upright);
+            bool normal = ragdoll.State == RagdollState.Normal;
+            Vector3 targetUp = normal ? TargetUp.normalized : up;
+            Vector3 pelvisUp = normal ? Bend(targetUp, PelvisBend, up) : up;
+            Vector3 chestUp = normal ? Bend(targetUp, ChestBend, up) : up;
+            Vector3 torque = UprightTorque(pelvis, pelvisUpLocal, pelvisUp, up, upright) + YawTorque(pelvis, up, upright);
             pelvis.AddTorque(JointMath.ClampMagnitude(torque, upright.maxTorque) * weight, ForceMode.Force);
 
             RagdollBone chest = ragdoll.Chest;
             if (chest != null && upright.chestWeight > 0f)
             {
-                Vector3 chestTorque = UprightTorque(chest.Body, chestUpLocal, targetUp, up, upright) * upright.chestWeight;
+                Vector3 chestTorque = UprightTorque(chest.Body, chestUpLocal, chestUp, up, upright) * upright.chestWeight;
                 chest.Body.AddTorque(JointMath.ClampMagnitude(chestTorque, upright.maxTorque) * weight, ForceMode.Force);
             }
 
             ApplyLift(pelvis, up, weight, targetHeight);
+        }
+
+        /// <summary>Tilts an up vector forward (towards the desired facing) by the given degrees.</summary>
+        Vector3 Bend(Vector3 targetUp, float degrees, Vector3 up)
+        {
+            if (Mathf.Abs(degrees) < 1e-3f)
+            {
+                return targetUp;
+            }
+
+            Vector3 axis = Vector3.Cross(up, DesiredFacing);
+            return axis.sqrMagnitude > 1e-6f ? Quaternion.AngleAxis(degrees, axis.normalized) * targetUp : targetUp;
         }
 
         static Vector3 UprightTorque(Rigidbody body, Vector3 upLocal, Vector3 targetUp, Vector3 up, UprightSettings upright)
