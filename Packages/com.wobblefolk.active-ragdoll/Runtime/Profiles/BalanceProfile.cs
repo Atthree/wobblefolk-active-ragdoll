@@ -60,6 +60,8 @@ namespace Wobblefolk.Ragdoll
         [Min(0f)] public float knockdownImpactSpeed = 9f;
         [Tooltip("Relative impact speed on the head that knocks the character out (m/s). 0 = disabled.")]
         [Min(0f)] public float knockoutImpactSpeed = 13f;
+        [Tooltip("Ignore foot impacts for knockdowns. Swinging feet hit the ground fast while sprinting.")]
+        public bool ignoreFootImpacts = true;
         [Tooltip("Muscle strength multiplier while fallen.")]
         [Range(0f, 1f)] public float fallenMuscleStrength = 0.3f;
     }

@@ -2,7 +2,8 @@
     "name": "Wobblefolk.Ragdoll.Editor",
     "rootNamespace": "Wobblefolk.Ragdoll.Editor",
     "references": [
-        "Wobblefolk.Ragdoll"
+        "Wobblefolk.Ragdoll",
+        "Wobblefolk.Ragdoll.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

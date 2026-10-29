@@ -11,12 +11,48 @@ namespace Wobblefolk.Ragdoll.Editor
         [MenuItem("GameObject/Wobblefolk/Primitive Active Ragdoll", false, 10)]
         static void CreatePrimitiveRagdoll(MenuCommand command)
         {
+            ActiveRagdoll ragdoll = Create(command);
+            Selection.activeGameObject = ragdoll.gameObject;
+        }
+
+        [MenuItem("GameObject/Wobblefolk/Primitive Active Ragdoll (Player)", false, 11)]
+        static void CreatePlayerRagdoll(MenuCommand command)
+        {
+            ActiveRagdoll ragdoll = Create(command);
+
+            Camera camera = Camera.main;
+            if (camera == null)
+            {
+                var cameraObject = new GameObject("Main Camera") { tag = "MainCamera" };
+                camera = cameraObject.AddComponent<Camera>();
+                Undo.RegisterCreatedObjectUndo(cameraObject, "Create Camera");
+            }
+
+            RagdollFollowCamera follow = camera.GetComponent<RagdollFollowCamera>();
+            if (follow == null) follow = Undo.AddComponent<RagdollFollowCamera>(camera.gameObject);
+            Undo.RecordObject(follow, "Assign Follow Target");
+            follow.Target = ragdoll;
+
+            var input = ragdoll.gameObject.AddComponent<RagdollPlayerInput>();
+            input.FollowCamera = follow;
+
+            if (Object.FindAnyObjectByType<RagdollPhysicsSettings>() == null)
+            {
+                var settings = new GameObject("Ragdoll Physics Settings", typeof(RagdollPhysicsSettings));
+                Undo.RegisterCreatedObjectUndo(settings, "Create Ragdoll Physics Settings");
+            }
+
+            Selection.activeGameObject = ragdoll.gameObject;
+        }
+
+        static ActiveRagdoll Create(MenuCommand command)
+        {
             RagdollProfile ragdollProfile = FindOrCreateAsset<RagdollProfile>("RagdollProfile");
             BalanceProfile balanceProfile = FindOrCreateAsset<BalanceProfile>("BalanceProfile");
+            LocomotionProfile locomotionProfile = FindOrCreateAsset<LocomotionProfile>("LocomotionProfile");
 
-            Vector3 position = SpawnPosition();
             ActiveRagdoll ragdoll = PrimitiveRagdollBuilder.Build(new PrimitiveBodyShape(), ragdollProfile, balanceProfile,
-                position, Quaternion.identity);
+                locomotionProfile, SpawnPosition(), Quaternion.identity);
             ragdoll.gameObject.AddComponent<RagdollDebugTools>();
 
             if (command.context is GameObject parent)
@@ -25,7 +61,7 @@ namespace Wobblefolk.Ragdoll.Editor
             }
 
             Undo.RegisterCreatedObjectUndo(ragdoll.gameObject, "Create Primitive Active Ragdoll");
-            Selection.activeGameObject = ragdoll.gameObject;
+            return ragdoll;
         }
 
         static Vector3 SpawnPosition()
