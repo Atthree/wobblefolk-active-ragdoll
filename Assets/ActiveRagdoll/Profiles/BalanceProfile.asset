@@ -39,6 +39,7 @@ MonoBehaviour:
     fallTiltTime: 0.2
     knockdownImpactSpeed: 9
     knockoutImpactSpeed: 13
+    ignoreFootImpacts: 1
     fallenMuscleStrength: 0.3
   getUp:
     delay: 1.2

@@ -47,13 +47,8 @@ namespace Wobblefolk.Ragdoll.Editor
 
         static ActiveRagdoll Create(MenuCommand command)
         {
-            RagdollProfile ragdollProfile = FindOrCreateAsset<RagdollProfile>("RagdollProfile");
-            BalanceProfile balanceProfile = FindOrCreateAsset<BalanceProfile>("BalanceProfile");
-            LocomotionProfile locomotionProfile = FindOrCreateAsset<LocomotionProfile>("LocomotionProfile");
-            ArmProfile armProfile = FindOrCreateAsset<ArmProfile>("ArmProfile");
-
-            ActiveRagdoll ragdoll = PrimitiveRagdollBuilder.Build(new PrimitiveBodyShape(), ragdollProfile, balanceProfile,
-                locomotionProfile, armProfile, SpawnPosition(), Quaternion.identity);
+            ActiveRagdoll ragdoll = PrimitiveRagdollBuilder.Build(new PrimitiveBodyShape(), FindOrCreateProfiles(),
+                SpawnPosition(), Quaternion.identity);
             ragdoll.gameObject.AddComponent<RagdollDebugTools>();
 
             if (command.context is GameObject parent)
@@ -77,6 +72,19 @@ namespace Wobblefolk.Ragdoll.Editor
             return Physics.Raycast(pivot + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 100f, ~0, QueryTriggerInteraction.Ignore)
                 ? hit.point
                 : pivot;
+        }
+
+        internal static RagdollProfileSet FindOrCreateProfiles()
+        {
+            return new RagdollProfileSet
+            {
+                ragdoll = FindOrCreateAsset<RagdollProfile>("RagdollProfile"),
+                balance = FindOrCreateAsset<BalanceProfile>("BalanceProfile"),
+                locomotion = FindOrCreateAsset<LocomotionProfile>("LocomotionProfile"),
+                arms = FindOrCreateAsset<ArmProfile>("ArmProfile"),
+                carry = FindOrCreateAsset<CarryProfile>("CarryProfile"),
+                climb = FindOrCreateAsset<ClimbProfile>("ClimbProfile"),
+            };
         }
 
         internal static T FindOrCreateAsset<T>(string fileName) where T : ScriptableObject
