@@ -1010,3 +1010,8 @@ Packages/com.wobblefolk.active-ragdoll/
 
 Bütün kod bu proje için sıfırdan yazılmıştır. Bazı açık kaynak projeler (MIT / Apache-2.0) yalnızca mimari fikir
 için incelenmiştir; `THIRD_PARTY_NOTICES.md` dosyasında listelenmiştir.
+
+---
+
+🤖 *This project was developed with the help of AI tools.*  
+🤖 *Bu proje yapay zekâ araçlarının yardımıyla geliştirilmiştir.*
